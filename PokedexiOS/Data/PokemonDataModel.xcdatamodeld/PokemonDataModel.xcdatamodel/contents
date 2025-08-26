@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788" systemVersion="24G90" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="Ability" representedClassName="Ability" syncable="YES" codeGenerationType="class">
+        <attribute name="abilityName" optional="YES" attributeType="String"/>
+        <attribute name="isHidden" optional="YES" attributeType="String"/>
+        <relationship name="pokemon" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Pokemon" inverseName="ability" inverseEntity="Pokemon"/>
+    </entity>
+    <entity name="BaseStats" representedClassName="BaseStats" syncable="YES" codeGenerationType="class">
+        <attribute name="attack" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="defense" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="hp" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="spAttack" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="spDefense" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="speed" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="pokemon" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Pokemon" inverseName="baseStats" inverseEntity="Pokemon"/>
+    </entity>
+    <entity name="EggGroup" representedClassName="EggGroup" syncable="YES" codeGenerationType="class">
+        <attribute name="groupName" optional="YES" attributeType="String"/>
+        <relationship name="pokemon" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Pokemon" inverseName="eggGroup" inverseEntity="Pokemon"/>
+    </entity>
+    <entity name="Evolution" representedClassName="Evolution" syncable="YES" codeGenerationType="class">
+        <relationship name="nextEvolution" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="NextEvolution" inverseName="evolution" inverseEntity="NextEvolution"/>
+        <relationship name="pokemon" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Pokemon" inverseName="evolution" inverseEntity="Pokemon"/>
+        <relationship name="previousEvolution" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PreviousEvolution" inverseName="evolution" inverseEntity="PreviousEvolution"/>
+    </entity>
+    <entity name="Images" representedClassName="Images" syncable="YES" codeGenerationType="class">
+        <attribute name="hiresURL" optional="YES" attributeType="String"/>
+        <attribute name="spriteURL" optional="YES" attributeType="String"/>
+        <attribute name="thumbnailURL" optional="YES" attributeType="String"/>
+        <relationship name="pokemon" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Pokemon" inverseName="images" inverseEntity="Pokemon"/>
+    </entity>
+    <entity name="Name" representedClassName="Name" syncable="YES" codeGenerationType="class">
+        <attribute name="chinese" optional="YES" attributeType="String"/>
+        <attribute name="english" optional="YES" attributeType="String"/>
+        <attribute name="french" optional="YES" attributeType="String"/>
+        <attribute name="japanese" optional="YES" attributeType="String"/>
+        <relationship name="pokemon" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Pokemon" inverseName="name" inverseEntity="Pokemon"/>
+    </entity>
+    <entity name="NextEvolution" representedClassName="NextEvolution" syncable="YES" codeGenerationType="class">
+        <attribute name="method" optional="YES" attributeType="String"/>
+        <attribute name="pokemonId" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="evolution" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Evolution" inverseName="nextEvolution" inverseEntity="Evolution"/>
+    </entity>
+    <entity name="Pokemon" representedClassName="Pokemon" syncable="YES" codeGenerationType="class">
+        <attribute name="gender" optional="YES" attributeType="String"/>
+        <attribute name="height" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="pokemonDescription" optional="YES" attributeType="String"/>
+        <attribute name="species" optional="YES" attributeType="String"/>
+        <attribute name="weight" optional="YES" attributeType="String"/>
+        <relationship name="ability" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Ability" inverseName="pokemon" inverseEntity="Ability"/>
+        <relationship name="baseStats" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BaseStats" inverseName="pokemon" inverseEntity="BaseStats"/>
+        <relationship name="eggGroup" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EggGroup" inverseName="pokemon" inverseEntity="EggGroup"/>
+        <relationship name="evolution" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Evolution" inverseName="pokemon" inverseEntity="Evolution"/>
+        <relationship name="images" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Images" inverseName="pokemon" inverseEntity="Images"/>
+        <relationship name="name" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Name" inverseName="pokemon" inverseEntity="Name"/>
+        <relationship name="type" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PokemonType" inverseName="pokemon" inverseEntity="PokemonType"/>
+    </entity>
+    <entity name="PokemonType" representedClassName="PokemonType" syncable="YES" codeGenerationType="class">
+        <attribute name="typeName" optional="YES" attributeType="String"/>
+        <relationship name="pokemon" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Pokemon" inverseName="type" inverseEntity="Pokemon"/>
+    </entity>
+    <entity name="PreviousEvolution" representedClassName="PreviousEvolution" syncable="YES" codeGenerationType="class">
+        <attribute name="method" optional="YES" attributeType="String"/>
+        <attribute name="pokemonId" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="evolution" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Evolution" inverseName="previousEvolution" inverseEntity="Evolution"/>
+    </entity>
+</model>
