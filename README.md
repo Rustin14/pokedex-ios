@@ -41,12 +41,12 @@ A modern SwiftUI application that provides comprehensive information about all 1
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/pokedex-swiftui.git
+git clone https://github.com/rustin14/pokedex-ios.git
 ```
 
 2. Open the project in Xcode:
 ```bash
-cd pokedex-swiftui
+cd pokedex-ios
 open PokeDex.xcodeproj
 ```
 
@@ -56,7 +56,6 @@ open PokeDex.xcodeproj
 
 This app utilizes Pokémon data from reliable sources to provide accurate and up-to-date information about:
 - Basic Pokémon stats (HP, Attack, Defense, etc.)
-- Type information and effectiveness
 - Evolution chains
 - Pokédex entries and descriptions
 - Sprite images and artwork
