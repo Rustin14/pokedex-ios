@@ -46,8 +46,8 @@ git clone https://github.com/rustin14/pokedex-ios.git
 
 2. Open the project in Xcode:
 ```bash
-cd pokedex-ios
-open PokeDex.xcodeproj
+cd PokedexiOS
+open PokeDexiOS.xcodeproj
 ```
 
 3. Build and run the project (⌘ + R)
