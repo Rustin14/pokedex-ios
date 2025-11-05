@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct PokemonDetail: View {
-    let pokemon: PokemonModel
+    let pokemon: Pokemon
     
     var body: some View {
         ScrollView {
-            AsyncImage(url: URL(string: "https://archives.bulbagarden.net/media/upload/7/7d/PE_Kanto_Map.png")){ result in
+            AsyncImage(url: URL(string: .kantoMapUrl)){ result in
                         result.image?
                             .resizable()
                             .scaledToFill()
@@ -20,14 +20,14 @@ struct PokemonDetail: View {
                     .frame(height: 300)
                     .opacity(0.75)
             
-            CircleAsyncImage(imageUrl: pokemon.image.hires ?? "")
+            CircleAsyncImage(imageUrl: pokemon.images?.spriteURL ?? .empty)
             
             PokemonInformationView(pokemon: pokemon)
                 .padding(.horizontal)
         
             Spacer()
         }
-        .navigationTitle(pokemon.name.english)
+        .navigationTitle(pokemon.name?.english ?? .empty)
         .navigationBarTitleDisplayMode(.inline)
         .ignoresSafeArea()
     }
@@ -51,17 +51,23 @@ struct CircleAsyncImage: View {
 }
 
 struct PokemonInformationView: View {
-    let pokemon: PokemonModel
+    let pokemon: Pokemon
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text(pokemon.name.english)
+            Text(pokemon.name?.english ?? .empty)
                 .font(.title)
             
             HStack {
-                if pokemon.type.count > 1 {
-                    Text(pokemon.type[.zero].rawValue + " / " + pokemon.type[1].rawValue)
+                if let types: Set<PokemonType> = pokemon.type as? Set<PokemonType> {
+                    HStack(spacing: 8) {
+                        ForEach(Array(types), id: \.self) { type in
+                            Text(type.typeName ?? .empty)
+                                .padding(8)
+                        }
+                    }
                 }
+                
                 Spacer()
                 Text("Kanto")
             }
@@ -70,15 +76,11 @@ struct PokemonInformationView: View {
             
             Divider()
             
-            Text(pokemon.species)
+            Text(pokemon.species ?? .empty)
                 .font(.title2)
             Text(pokemon.description)
 
         }
         .padding()
     }
-}
-
-#Preview {
-    PokemonDetail(pokemon: pokedex[0])
 }

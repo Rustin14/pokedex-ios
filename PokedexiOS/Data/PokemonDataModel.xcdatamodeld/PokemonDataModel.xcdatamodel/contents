@@ -50,7 +50,7 @@
         <attribute name="weight" optional="YES" attributeType="String"/>
         <relationship name="ability" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Ability" inverseName="pokemon" inverseEntity="Ability"/>
         <relationship name="baseStats" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BaseStats" inverseName="pokemon" inverseEntity="BaseStats"/>
-        <relationship name="eggGroup" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EggGroup" inverseName="pokemon" inverseEntity="EggGroup"/>
+        <relationship name="eggGroup" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="EggGroup" inverseName="pokemon" inverseEntity="EggGroup"/>
         <relationship name="evolution" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Evolution" inverseName="pokemon" inverseEntity="Evolution"/>
         <relationship name="images" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Images" inverseName="pokemon" inverseEntity="Images"/>
         <relationship name="name" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Name" inverseName="pokemon" inverseEntity="Name"/>

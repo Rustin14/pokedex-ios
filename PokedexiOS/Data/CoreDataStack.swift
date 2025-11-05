@@ -14,7 +14,7 @@ class CoreDataStack {
     static let shared = CoreDataStack()
     
     lazy var persistentContainer: NSPersistentContainer = {
-        let container: NSPersistentContainer = .init(name: "PokedexiOS")
+        let container: NSPersistentContainer = .init(name: "PokemonDataModel")
         container.loadPersistentStores { _, error in
             if let error = error as NSError? {
                 fatalError("Core Data error: \(error), \(error.userInfo)")
@@ -47,7 +47,7 @@ class CoreDataStack {
 }
 
 // MARK: - JSON to Core Data Manager
-class JSONToCoreDataManager {
+class PokemonDataImporter {
     private let coreDataStack: CoreDataStack = CoreDataStack.shared
     
     func importPokemonData(from fileName: String) {
@@ -83,16 +83,18 @@ class JSONToCoreDataManager {
         createNextEvolutions(from: pokemonModel.evolution, for: pokemon)
         
         // Previous evolution attributes
+        createPreviousEvolutions(from: pokemonModel.evolution, for: pokemon)
         
-        
-        
-        
-        
-         
+        //Egg groups attributes
+        createEggGroups(from: pokemonModel.profile.egg ?? [], for: pokemon)
     }
     
     private func createProfile(from pokemonModel: PokemonModel, for pokemon: Pokemon) {
         pokemon.id = Int16(pokemonModel.id)
+        pokemon.name?.english = pokemonModel.name.english
+        pokemon.name?.chinese = pokemonModel.name.chinese
+        pokemon.name?.french = pokemonModel.name.french
+        pokemon.name?.japanese = pokemonModel.name.japanese
         pokemon.pokemonDescription = pokemonModel.description
         pokemon.species = pokemonModel.species
         pokemon.weight = pokemonModel.profile.weight
@@ -128,14 +130,25 @@ class JSONToCoreDataManager {
     }
     
     private func createImages(from image: ImageModel, for pokemon: Pokemon) {
-        pokemon.images?.spriteURL = image.sprite
-        pokemon.images?.thumbnailURL = image.thumbnail
-        pokemon.images?.hiresURL = image.hires
+        let imageEntity = Images(context: coreDataStack.context) // O el nombre que tenga tu entidad
+       imageEntity.spriteURL = image.sprite
+       imageEntity.thumbnailURL = image.thumbnail
+       imageEntity.hiresURL = image.hires
+           
+       // Asignar la relación
+        pokemon.images = imageEntity
     }
     
     private func createNextEvolutions(from evolution: PokemonEvolution, for pokemon: Pokemon) {
-        let evolutionEntity = Evolution(context: coreDataStack.context)
-        evolutionEntity.pokemon = pokemon
+        // Necesitas obtener o crear la entidad Evolution
+        let evolutionEntity: Evolution
+        if let existingEvolution = pokemon.evolution {
+            evolutionEntity = existingEvolution
+        } else {
+            evolutionEntity = Evolution(context: coreDataStack.context)
+            evolutionEntity.pokemon = pokemon
+            pokemon.evolution = evolutionEntity // ¡Asignar la relación!
+        }
         
         var nextEvolutionEntities: Set<NextEvolution> = []
         
@@ -143,21 +156,55 @@ class JSONToCoreDataManager {
             let nextEvolution = NextEvolution(context: coreDataStack.context)
             nextEvolution.pokemonId = Int16(Int(evolutionData[.zero]) ?? .zero)
             nextEvolution.method = evolutionData[.one]
+            nextEvolution.evolution = evolutionEntity // Asignar relación inversa
             
             nextEvolutionEntities.insert(nextEvolution)
         }
         
         evolutionEntity.nextEvolution = nextEvolutionEntities as NSSet
     }
-    
+
     private func createPreviousEvolutions(from evolution: PokemonEvolution, for pokemon: Pokemon) {
-        let evolutionEntity = Evolution(context: coreDataStack.context)
-        evolutionEntity.pokemon = pokemon
+        // Reutilizar la misma entidad Evolution
+        let evolutionEntity: Evolution
+        if let existingEvolution = pokemon.evolution {
+            evolutionEntity = existingEvolution
+        } else {
+            evolutionEntity = Evolution(context: coreDataStack.context)
+            evolutionEntity.pokemon = pokemon
+            pokemon.evolution = evolutionEntity
+        }
         
-        var previousEvolution = PreviousEvolution(context: coreDataStack.context)
+        if let prevData = evolution.prev {
+            let previousEvolution = PreviousEvolution(context: coreDataStack.context)
+            previousEvolution.pokemonId = Int16(Int(prevData[.zero]) ?? .zero)
+            previousEvolution.method = prevData[.one]
+            previousEvolution.evolution = evolutionEntity // Asignar relación inversa
+            
+            // Asignar evolución a pokemon
+        }
+    }
+    
+    private func createEggGroups(from eggGroups: [PokemonEgg], for pokemon: Pokemon) {
+        var eggGroupsEntities: Set<EggGroup> = []
         
-        previousEvolution.pokemonId = Int16(Int(evolution.prev?[.zero] ?? .empty) ?? .zero)
+        for eggGroupData in eggGroups {
+            let eggGroup = EggGroup(context: coreDataStack.context)
+            eggGroup.groupName = eggGroupData.rawValue
+            eggGroup.pokemon = pokemon // Asignar relación inversa
+            eggGroupsEntities.insert(eggGroup)
+        }
         
-        previousEvolution.method = evolution.prev?[.one] ?? .empty
+        pokemon.eggGroup = eggGroupsEntities as NSSet
     }
 }
+
+extension PokemonDataImporter {
+    /// Convenience method to import data from CoreDataStack
+    static func importData(from fileName: String) {
+        let dataImporter = PokemonDataImporter()
+        dataImporter.importPokemonData(from: fileName)
+    }
+}
+
+

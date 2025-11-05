@@ -8,8 +8,11 @@
 import SwiftUI
 
 struct ContentView: View {
+    let persistenceController = CoreDataStack.shared
+
     var body: some View {
         PokedexList()
+            .environment(\.managedObjectContext, persistenceController.context)
     }
 }
 

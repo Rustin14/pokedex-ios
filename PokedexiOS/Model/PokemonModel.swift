@@ -10,7 +10,7 @@ import Foundation
 // MARK: - Pokemon struct
 struct PokemonModel: Decodable, Identifiable {
     let id: Int
-    let isFavorite: Bool
+    let isFavorite: Bool?
     let name: PokemonName
     let type: [PokemonTypeEnum]
     let base: BasePoints?
