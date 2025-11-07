@@ -29,7 +29,28 @@ class PokedexListViewModel: ObservableObject {
     private let refreshTrigger: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
     
     init() {
+        setupSearch()
+    }
+    
+    private func setupSearch() {
+        filteredPokemon = pokemon
         
+        $searchText
+            .combineLatest($pokemon)
+            .debounce(for: .milliseconds(300), scheduler: RunLoop.main) // Evita búsquedas excesivas
+            .map { searchText, pokemon in
+                guard !searchText.isEmpty else {
+                    return pokemon
+                }
+                return pokemon.filter { pokemon in
+                    guard let pokemonNames: Name = pokemon.name,
+                            let englishPokemonName: String = pokemonNames.english else {
+                        return false
+                    }
+                    return englishPokemonName.localizedCaseInsensitiveContains(searchText)
+                }
+            }
+            .assign(to: &$filteredPokemon)
     }
     
     // Obtener todos los Pokémon
@@ -72,6 +93,29 @@ class PokedexListViewModel: ObservableObject {
             errorMessage = error.localizedDescription
         }
     }
+    
+    private func fetchPokemonsForSearch() {
+            let request: NSFetchRequest<Pokemon> = Pokemon.fetchRequest()
+            
+            if !searchText.isEmpty && !searchText.trimmingCharacters(in: .whitespaces).isEmpty {
+                var predicates: [NSPredicate] = []
+
+                let namePredicate: NSPredicate = NSPredicate(format: "(name != nil AND name CONTAINS[cd] %@)", searchText)
+                
+                predicates.append(namePredicate)
+                
+                request.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: predicates)
+            }
+            
+            request.sortDescriptors = [NSSortDescriptor(keyPath: \Pokemon.id, ascending: true)]
+            
+            do {
+                filteredPokemon = try context.fetch(request)
+            } catch {
+                print("Error fetching pokemons: \(error)")
+                filteredPokemon = []
+            }
+        }
     
     // Guardar cambios
     func save() {

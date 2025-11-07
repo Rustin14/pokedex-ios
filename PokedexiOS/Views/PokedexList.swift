@@ -12,7 +12,7 @@ struct PokedexList: View {
     
     var body: some View {
         NavigationSplitView {
-            List(viewModel.pokemon) { pokemon in
+            List(viewModel.filteredPokemon) { pokemon in
                 NavigationLink {
                     PokemonDetail(pokemon: pokemon)
                 } label: {
@@ -30,6 +30,7 @@ struct PokedexList: View {
                 }
             }
             .navigationTitle("Pokedex")
+            .searchable(text: $viewModel.searchText, prompt: "Search")
         } detail: {
             Text("Select a Pokemon")
         }

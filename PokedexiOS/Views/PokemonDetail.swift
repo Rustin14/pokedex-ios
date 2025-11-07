@@ -78,7 +78,7 @@ struct PokemonInformationView: View {
             
             Text(pokemon.species ?? .empty)
                 .font(.title2)
-            Text(pokemon.description)
+            Text(pokemon.pokemonDescription ?? .empty)
 
         }
         .padding()

@@ -91,6 +91,7 @@ class PokemonDataImporter {
     
     private func createProfile(from pokemonModel: PokemonModel, for pokemon: Pokemon) {
         pokemon.id = Int16(pokemonModel.id)
+        pokemon.name = Name(context: coreDataStack.context)
         pokemon.name?.english = pokemonModel.name.english
         pokemon.name?.chinese = pokemonModel.name.chinese
         pokemon.name?.french = pokemonModel.name.french
@@ -130,12 +131,11 @@ class PokemonDataImporter {
     }
     
     private func createImages(from image: ImageModel, for pokemon: Pokemon) {
-        let imageEntity = Images(context: coreDataStack.context) // O el nombre que tenga tu entidad
-       imageEntity.spriteURL = image.sprite
-       imageEntity.thumbnailURL = image.thumbnail
-       imageEntity.hiresURL = image.hires
-           
-       // Asignar la relación
+        let imageEntity: Images = Images(context: coreDataStack.context)
+        imageEntity.spriteURL = image.sprite
+        imageEntity.thumbnailURL = image.thumbnail
+        imageEntity.hiresURL = image.hires
+        
         pokemon.images = imageEntity
     }
     
