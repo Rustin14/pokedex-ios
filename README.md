@@ -34,8 +34,8 @@ A modern SwiftUI application that provides comprehensive information about all 1
 ## 🎯 Requirements
 
 - iOS 15.0+
-- Xcode 14.0+
-- Swift 5.7+
+- Xcode 26.0+
+- Swift 6+
 
 ## 🔧 Installation
 
@@ -90,12 +90,12 @@ The app follows the **MVVM (Model-View-ViewModel)** pattern:
 
 - [X] Initial project setup
 - [X] CoreData model design
-- [ ] Networking layer with Alamofire
-- [ ] Basic SwiftUI views
-- [ ] Combine integration
+- [X] Basic SwiftUI views
+- [X] Combine integration
+- [X] Search and filter functionality
+- [X] Offline data management
 - [ ] CoreAnimation implementations
-- [ ] Search and filter functionality
-- [ ] Offline data management
 - [ ] Testing and optimization
+- [ ] Networking layer with Alamofire
 
 *Built with ❤️ and Swift*
