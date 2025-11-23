@@ -101,6 +101,7 @@ class PokemonDataImporter {
         pokemon.weight = pokemonModel.profile.weight
         pokemon.height = pokemonModel.profile.height
         pokemon.gender = pokemonModel.profile.gender.rawValue
+        pokemon.isFavorite = false
     }
     
     private func createAbilities(from abilities: [[String]], for pokemon: Pokemon) {

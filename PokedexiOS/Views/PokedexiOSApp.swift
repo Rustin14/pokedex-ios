@@ -23,7 +23,7 @@ struct PokedexiOSApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            PokedexContentView()
         }
     }
 }

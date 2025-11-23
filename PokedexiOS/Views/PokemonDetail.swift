@@ -8,29 +8,58 @@
 import SwiftUI
 
 struct PokemonDetail: View {
-    let pokemon: Pokemon
+    // MARK: Properties
+    @ObservedObject var viewModel: PokemonDetailViewModel
     
+    // MARK: States
+    @State var isFavorite: Bool = false
+    
+    init(viewModel: PokemonDetailViewModel) {
+        self.viewModel = viewModel
+    }
+    
+    // MARK:
     var body: some View {
         ScrollView {
-            AsyncImage(url: URL(string: .kantoMapUrl)){ result in
-                        result.image?
-                            .resizable()
-                            .scaledToFill()
-                    }
-                    .frame(height: 300)
-                    .opacity(0.75)
+            if let mapImage: UIImage = viewModel.mapImage {
+                Image(uiImage: mapImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(height: 275)
+                        .opacity(0.75)
+                        .padding(10)
+            } else {
+                SkeletonView(height: 275)
+            }
             
-            CircleAsyncImage(imageUrl: pokemon.images?.spriteURL ?? .empty)
+            CircleAsyncImage(imageUrl: viewModel.pokemon.images?.hiresURL ?? .empty)
             
-            PokemonInformationView(pokemon: pokemon)
+            PokemonInformationView(pokemon: viewModel.pokemon)
                 .padding(.horizontal)
         
             Spacer()
         }
-        .navigationTitle(pokemon.name?.english ?? .empty)
+        .navigationTitle(viewModel.pokemon.name?.english ?? .empty)
         .navigationBarTitleDisplayMode(.inline)
-        .ignoresSafeArea()
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                        viewModel.toggleFavorite()
+                        isFavorite = viewModel.pokemon.isFavorite
+                    }
+                }) {
+                    Image(systemName: isFavorite ? "star.fill" : "star")
+                        .foregroundStyle(isFavorite ? .red : .gray)
+                        .scaleEffect(isFavorite ? 1.2 : 1.0)
+                }
+            }
+        }
+        .onAppear {
+            isFavorite = viewModel.pokemon.isFavorite
+        }
     }
+
 }
 
 struct CircleAsyncImage: View {
@@ -40,13 +69,14 @@ struct CircleAsyncImage: View {
         AsyncImage(url: URL(string: imageUrl)) { result in
             result.image?
                 .resizable()
-                .scaledToFill()
+                .aspectRatio(contentMode: .fit)
+                .padding(20)
         }
-        .frame(width: 210, height: 210)
+        .frame(width: 200, height: 200)
         .background(Color.white)
-        .clipShape(Circle())
+        .clipShape(.circle)
         .offset(y: -130)
-        .padding(.bottom, -130)
+        .padding(.bottom, -180)
     }
 }
 
@@ -63,7 +93,6 @@ struct PokemonInformationView: View {
                     HStack(spacing: 8) {
                         ForEach(Array(types), id: \.self) { type in
                             Text(type.typeName ?? .empty)
-                                .padding(8)
                         }
                     }
                 }

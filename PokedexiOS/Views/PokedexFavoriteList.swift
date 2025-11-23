@@ -1,14 +1,14 @@
 //
-//  PokedexList.swift
+//  PokemonFavoriteList.swift
 //  PokedexiOS
 //
-//  Created by Gabriel Flores on 28/03/25.
+//  Created by Gabriel Flores on 13/11/25.
 //
 
 import SwiftUI
 
-struct PokedexList: View {
-    @StateObject var viewModel: PokedexListViewModel = PokedexListViewModel()
+struct PokedexFavoriteList: View {
+    @StateObject var viewModel: PokemonFavoritesViewModel = PokemonFavoritesViewModel()
     
     @available(iOS 26.0, *)
     var glassPokemonList: some View {
@@ -21,7 +21,7 @@ struct PokedexList: View {
                 }
             }
             .onAppear {
-                viewModel.fetchAllPokemons()
+                viewModel.fetchFavoritePokemon()
             }
             .alert("Error", isPresented: $viewModel.showError) {
                 VStack {
@@ -30,7 +30,7 @@ struct PokedexList: View {
                     Button("OK", role: .cancel) {}
                 }
             }
-            .navigationTitle("Pokedex")
+            .navigationTitle("Favoritos")
             .searchable(text: $viewModel.searchText, prompt: "Search")
             .glassEffect(in: .rect(cornerRadius: 16.0))
         } detail: {
@@ -48,7 +48,7 @@ struct PokedexList: View {
                 }
             }
             .onAppear {
-                viewModel.fetchAllPokemons()
+                viewModel.fetchFavoritePokemon()
             }
             .alert("Error", isPresented: $viewModel.showError) {
                 VStack {
@@ -57,7 +57,7 @@ struct PokedexList: View {
                     Button("OK", role: .cancel) {}
                 }
             }
-            .navigationTitle("Pokedex")
+            .navigationTitle("Favoritos")
             .searchable(text: $viewModel.searchText, prompt: "Search")
         } detail: {
             Text("Select a Pokemon")
@@ -74,5 +74,7 @@ struct PokedexList: View {
 }
 
 #Preview {
-    PokedexList()
+    PokedexFavoriteList()
 }
+
+

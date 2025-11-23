@@ -21,6 +21,8 @@ class PokedexListViewModel: ObservableObject {
     
     // MARK: Properties
     private let context = CoreDataStack.shared.context
+    private let imageCache: NSCache = NSCache<AnyObject, AnyObject>()
+    var mapImage: UIImage? = nil
     
     // MARK: Dependencies
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
@@ -37,7 +39,7 @@ class PokedexListViewModel: ObservableObject {
         
         $searchText
             .combineLatest($pokemon)
-            .debounce(for: .milliseconds(300), scheduler: RunLoop.main) // Evita búsquedas excesivas
+            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
             .map { searchText, pokemon in
                 guard !searchText.isEmpty else {
                     return pokemon
@@ -95,32 +97,30 @@ class PokedexListViewModel: ObservableObject {
     }
     
     private func fetchPokemonsForSearch() {
-            let request: NSFetchRequest<Pokemon> = Pokemon.fetchRequest()
-            
-            if !searchText.isEmpty && !searchText.trimmingCharacters(in: .whitespaces).isEmpty {
-                var predicates: [NSPredicate] = []
+        let request: NSFetchRequest<Pokemon> = Pokemon.fetchRequest()
+        
+        if !searchText.isEmpty && !searchText.trimmingCharacters(in: .whitespaces).isEmpty {
+            var predicates: [NSPredicate] = []
 
-                let namePredicate: NSPredicate = NSPredicate(format: "(name != nil AND name CONTAINS[cd] %@)", searchText)
-                
-                predicates.append(namePredicate)
-                
-                request.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: predicates)
-            }
+            let namePredicate: NSPredicate = NSPredicate(format: "(name != nil AND name CONTAINS[cd] %@)", searchText)
             
-            request.sortDescriptors = [NSSortDescriptor(keyPath: \Pokemon.id, ascending: true)]
+            predicates.append(namePredicate)
             
-            do {
-                filteredPokemon = try context.fetch(request)
-            } catch {
-                print("Error fetching pokemons: \(error)")
-                filteredPokemon = []
-            }
+            request.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: predicates)
         }
+        
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \Pokemon.id, ascending: true)]
+        
+        do {
+            filteredPokemon = try context.fetch(request)
+        } catch {
+            print("Error fetching pokemons: \(error)")
+            filteredPokemon = []
+        }
+    }
     
     // Guardar cambios
     func save() {
         CoreDataStack.shared.save()
     }
-    
-    
 }
